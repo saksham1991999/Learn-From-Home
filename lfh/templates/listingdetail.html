@@ -3,30 +3,24 @@
 
 {% block content %}
 
-{% for class in classes %}
-    {{ class }}
-{% endfor %}
 
-
-{% for subject in subjects %}
-    {{ subject.subject_name }}  
-{% endfor %}
-
-
-{% for listing in listings %}
     {{ listing.title }}
+
     {{ listing.tutor.name }}
+
     {{ listing.subject }}
+
     {{ listing.student_class }}
+
     {{ listing.class_type }}
+
     {{ listing.hourly_rate }}
 
     {{ listing.methodology }}
+
     {{ listing.details }}
+
     {{ listing.class_slot }}
-{% endfor %}
-
-
 
 
 {% endblock content %}

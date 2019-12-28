@@ -32,7 +32,7 @@ def HomeView(request):
         search_term = request.GET['search']
         all_listing = all_listing.filter(subject__icontains = search_term, class__icontains = search_term)
 
-    paginator = Paginator(all_listing, 102)
+    paginator = Paginator(all_listing, 10)
 
     page = request.GET.get('page')
     all_listing = paginator.get_page(page)
@@ -42,7 +42,7 @@ def HomeView(request):
     context = {
         'subjects': all_subjects,
         'classes': all_classes,
-        'listing': all_listing,
+        'listings': all_listing,
         'params': params, 
         'search_term': search_term
     }
@@ -56,40 +56,39 @@ def TutorsView(request, tutorid):
     return render(request, 'index.html', context)
 
 def TutorDetailView(request, tutorid):
-    tutor = models.TutorProfile.objects.get( id = tutorid )
+    tutor = get_object_or_404(models.TutorProfile, id = tutorid)
     context = {
         'tutor': tutor,
     }
-    return render(request, 'index.html', context)
+    return render(request, 'tutordetails.html', context)
 
 def ListingDetailView(request, listingid):
-    listing = models.listings.objects.get( id = listingid )
+    listing = get_object_or_404( models.listings, id = listingid )
     context = {
         'listing': listing,
     }
-    return render(request, 'index.html', context)
+    return render(request, 'listingdetail.html', context)
 
 @login_required
 def StudentProfileView(request):
-    currentstudentprofile = models.StudentProfile.objects.filter(tutor = request.user).first()
+    currentstudentprofile = models.StudentProfile.objects.filter(student = request.user).first()
     if request.method == "POST":
-        form = forms.TutorProfileForm(request.POST, instance=currentstudentprofile)
+        form = forms.StudentProfileForm(request.POST, instance=currentstudentprofile)
         if form.is_valid():
-            student_profile = form(commit = False)
-            student_profile.student = request.user
-            student_profile.save()
+            form.student = request.user
+            form.save()
             messages.success(
                 request,
                 'Details Saved Successfully',
                 extra_tags='alert alert-success alert-dismissible fade show'
                 )
-            return redirect('core:tutorprofile')
+            return redirect('core:studentprofile')
     else:
-        form = forms.TutorProfileForm(instance = currentstudentprofile)
+        form = forms.StudentProfileForm(instance = currentstudentprofile)
         context = {
             'form': form,
         }
-    return render(request, 'studentprofile.html', context)
+        return render(request, 'student/studentprofile.html', context)
 
 @login_required
 def TutorProfileView(request):
@@ -97,9 +96,8 @@ def TutorProfileView(request):
     if request.method == "POST":
         form = forms.TutorProfileForm(request.POST, instance=currenttutorprofile)
         if form.is_valid():
-            tutor_profile = form(commit = False)
-            tutor_profile.tutor = request.user
-            tutor_profile.save()
+            form.tutor = request.user
+            form.save()
             messages.success(
                 request,
                 'Details Saved Successfully',
@@ -111,7 +109,7 @@ def TutorProfileView(request):
         context = {
             'form': form,
         }
-    return render(request, 'tutorprofile.html', context)
+        return render(request, 'tutor/tutorprofile.html', context)
 
 @login_required
 def AddListingView(request):
@@ -119,7 +117,8 @@ def AddListingView(request):
         form = forms.ListingsForm(request.POST)
         if form.is_valid():
             new_listing = form(commit = False)
-            new_listing.tutor = request.user
+            tutorprofile = get_object_or_404(models.TutorProfile, tutor=request.user)
+            new_listing.tutor = tutorprofile
             new_listing.save()
             messages.success(
                 request,
@@ -132,15 +131,16 @@ def AddListingView(request):
         context = {
             'form': form,
         }
-    return render(request, 'tutor_view_listings.html', context)
+        return render(request, 'tutor/tutoraddlisting.html', context)
 
 @login_required
 def ViewListingsView(request):
-    listings = models.listings.objects.filter(tutor = request.user)
+    tutorprofile = get_object_or_404(models.TutorProfile, tutor = request.user)
+    listings = models.listings.objects.filter(tutor = tutorprofile)
     context = {
         'listings': listings,
     }
-    return render(request, 'tutorprofile.html', context)
+    return render(request, 'tutor/tutorlistings.html', context)
 
 @login_required
 def EditListingView(request, listingid):
@@ -149,7 +149,7 @@ def EditListingView(request, listingid):
         return redirect('/')
 
     if request.method == "POST":
-        form = forms.ListingsForm(request.POST, isinstance = listing)
+        form = forms.ListingsForm(request.POST, instance = listing)
         if form.is_valid():
             form.save()
             messages.success(
@@ -181,21 +181,27 @@ def DeleteListingView(request, listingid):
                 )
         return redirect('polls:home')
 
-        context = {
-            'listing': listing,
-        }
+    context = {
+        'listing': listing,
+    }
     return render(request, 'delete_listing.html', context)
-
 
 @login_required
 def StudentClassRequestView(request):
-    context = {}
+    studentuser = get_object_or_404(models.StudentProfile, student = request.user)
+    studentrequests = models.class_request.objects.filter(student = studentuser)
+    context = {
+        'studentrequests':studentrequests,
+    }
     return render(request, 'index.html', context)
 
 @login_required
 def TutorClassRequestView(request):
-    tutor = request.user
-    classrequests = tutor.models.class_request__set()
-    context = {}
+    tutoruser = get_object_or_404(models.TutorProfile, student = request.user)
+    listings = models.listings.objects.filter(tutor = tutoruser)
+    classrequests = models.class_request.objects.all(listingset__in = listings)
+    context = {
+        'classrequests':classrequests,
+    }
     return render(request, 'index.html', context)
 

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-md-6 offset-sm-3">
+    <form action="" method="post" class="contact-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="row">
+                {{ field.errors }}
+                {{ field.label_tag }}
+                {{ field }}
+            </div>
+        {% endfor %}
+        <div class="text-center">
+            <input type="submit" value="SEND MESSAGE" class="site-btn">
+        </div>
+    </form>
+</div>
+{% endblock content %}
