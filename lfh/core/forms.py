@@ -29,7 +29,7 @@ class StudentProfileForm(forms.ModelForm):
             'student_class', 
             'school', 
             'board', 
-            'notisfications',]
+            'notifications',]
 
         labels = {
             'name': _("Full Name"),
@@ -42,7 +42,7 @@ class StudentProfileForm(forms.ModelForm):
             'student_class': _('Class'), 
             'school': _('School'), 
             'board': _('School Board'), 
-            'notisfications': _('Notidfications Type'),
+            'notifications': _('Notidfications Type'),
         }
 
 class TutorProfileForm(forms.ModelForm):

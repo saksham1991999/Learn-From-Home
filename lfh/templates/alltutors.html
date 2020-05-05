@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+{% for tutor in tutors %}
+    {{ tutor.name }}
+    {{ tutor.gender }}
+    {{ tutor.name }}
+    {{ tutor.email }}
+    {{ tutor.profile_pic.url }}
+{% endfor %}
+
+
+
+{% endblock content %}

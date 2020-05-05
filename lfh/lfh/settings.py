@@ -33,8 +33,11 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_countries',
     'phone_field',
+    'rest_framework',
+    'rest_framework.authtoken',
 
     'core',
+
 ]
 
 MIDDLEWARE = [
@@ -139,3 +142,11 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'saksham191999@gmail.com'
 EMAIL_HOST_PASSWORD = 's2ksh2m19'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}

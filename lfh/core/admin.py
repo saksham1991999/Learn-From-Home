@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     languages,
     subjects,
-    notisfications_type,
+    notifications_type,
     StudentProfile,
     TutorProfile,
     TimeSlots,
@@ -104,7 +104,7 @@ class paymentAdmin(admin.ModelAdmin):
 
 admin.site.register(languages)
 admin.site.register(subjects)
-admin.site.register(notisfications_type)
+admin.site.register(notifications_type)
 admin.site.register(TimeSlots)
 
 admin.site.register(StudentProfile, StudentProfileAdmin)

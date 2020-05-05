@@ -43,14 +43,14 @@ class subjects(models.Model):
     class Meta:
         verbose_name_plural = 'Subjects'
    
-class notisfications_type(models.Model):
-    notisfications_title = models.CharField(max_length = 20)
+class notifications_type(models.Model):
+    notifications_title = models.CharField(max_length = 20)
 
     def __str__(self):
-        return self.notisfications_title
+        return self.notifications_title
 
     class Meta:
-        verbose_name_plural = 'Notisfication Types'
+        verbose_name_plural = 'Notification Types'
 
 class StudentProfile(models.Model):
     student = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default = 1)
@@ -65,7 +65,7 @@ class StudentProfile(models.Model):
     student_class = models.CharField(max_length = 5, choices = class_choices)
     school = models.CharField(max_length = 100, blank = True, null = True)
     board = models.CharField(max_length = 50, blank = True, null = True)
-    notisfications = models.ManyToManyField(notisfications_type, blank = True)
+    notifications = models.ManyToManyField(notifications_type, blank = True)
 
     def __str__(self):
         return self.name
@@ -101,7 +101,7 @@ class TimeSlots(models.Model):
     end_time = models.CharField(max_length = 10)
 
     def __str__(self):
-        slot = self.start_time + ' - ' + self.end_time
+        slot = str(self.start_time) + ' - ' + str(self.end_time)
         return slot
 
     class Meta:
@@ -132,7 +132,7 @@ class class_request(models.Model):
     accepted_status = models.BooleanField(default=0)
 
     def __str__(self):
-        lsiting_name = self.student.name + ' - ' + self.listing.title
+        lsiting_name = self.student.name + ' - ' + str(self.listing)
         return lsiting_name
     
     class Meta:
